@@ -1,0 +1,86 @@
+<div class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100">
+  <div class="max-w-md w-full mx-4 space-y-8">
+    <div>
+      <div class="mx-auto h-10 w-10 flex items-center justify-center rounded-full bg-green-100">
+        <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+        </svg>
+      </div>
+      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        Create your account
+      </h2>
+      <p class="mt-2 text-center text-sm text-gray-600">
+        Join Triledger ERP today
+      </p>
+    </div>
+    
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "mt-8 space-y-6" }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="user_first_name" class="block text-sm font-medium text-gray-700">First Name</label>
+            <%= f.text_field :first_name, autocomplete: "given-name",
+                class: "mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm",
+                placeholder: "First name" %>
+          </div>
+          <div>
+            <label for="user_last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+            <%= f.text_field :last_name, autocomplete: "family-name",
+                class: "mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm",
+                placeholder: "Last name" %>
+          </div>
+        </div>
+
+        <div>
+          <label for="user_email" class="block text-sm font-medium text-gray-700">Email address</label>
+          <%= f.email_field :email, autocomplete: "email",
+              class: "mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm",
+              placeholder: "Email address" %>
+        </div>
+
+        <div>
+          <label for="user_phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+          <%= f.telephone_field :phone, autocomplete: "tel",
+              class: "mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm",
+              placeholder: "Phone number" %>
+        </div>
+
+        <div>
+          <label for="user_password" class="block text-sm font-medium text-gray-700">Password</label>
+          <%= f.password_field :password, autocomplete: "new-password",
+              class: "mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm",
+              placeholder: "Password (#{@minimum_password_length} characters minimum)" %>
+        </div>
+
+        <div>
+          <label for="user_password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password",
+              class: "mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm",
+              placeholder: "Confirm password" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.submit "Create Account", class: "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out" %>
+      </div>
+    <% end %>
+
+    <div class="mt-6">
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-gradient-to-br from-green-50 to-emerald-100 text-gray-500">Already have an account?</span>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <%= link_to "Sign in", new_session_path(resource_name), 
+            class: "w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out" %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Triledger" %></title>
+    <title><%= content_for(:title) || "Triledger ERP" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -10,9 +10,6 @@
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
@@ -20,9 +17,53 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for interactive charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
 
   <body>
+    <% if user_signed_in? %>
+      <!-- Navigation -->
+      <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between h-16">
+            <div class="flex">
+              <!-- Logo -->
+              <div class="flex-shrink-0 flex items-center">
+                <h1 class="text-xl font-bold text-gray-900">Triledger ERP</h1>
+              </div>
+              
+              <!-- Navigation Links -->
+              <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                <%= link_to 'Dashboard', root_path, class: "inline-flex items-center px-1 pt-1 border-b-2 #{current_page?(root_path) ? 'border-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} text-sm font-medium" %>
+                <%= link_to 'Employees', employees_path, class: "inline-flex items-center px-1 pt-1 border-b-2 #{controller_name == 'employees' ? 'border-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} text-sm font-medium" %>
+                <% if current_user.has_role?('System Administrator') %>
+                  <%= link_to 'Roles', roles_path, class: "inline-flex items-center px-1 pt-1 border-b-2 #{controller_name == 'roles' ? 'border-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} text-sm font-medium" %>
+                <% end %>
+              </div>
+            </div>
+            
+            <!-- User Menu -->
+            <div class="flex items-center">
+              <div class="ml-3 relative">
+                <div class="flex items-center space-x-4">
+                  <span class="text-sm text-gray-700">
+                    Welcome, <%= current_user.first_name %>
+                  </span>
+                  <%= link_to 'Profile', profile_path, class: "text-sm text-blue-600 hover:text-blue-800" %>
+                  <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: "text-sm text-red-600 hover:text-red-800" %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    <% end %>
     <%= yield %>
   </body>
 </html>
+   

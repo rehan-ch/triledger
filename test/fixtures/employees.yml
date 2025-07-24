@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  employee_id: MyString
+  department: MyString
+  position: MyString
+  hire_date: 2025-07-25
+  status: MyString
+  salary: 9.99
+  address: MyText
+  emergency_contact_name: MyString
+  emergency_contact_phone: MyString
+
+two:
+  user: two
+  employee_id: MyString
+  department: MyString
+  position: MyString
+  hire_date: 2025-07-25
+  status: MyString
+  salary: 9.99
+  address: MyText
+  emergency_contact_name: MyString
+  emergency_contact_phone: MyString
