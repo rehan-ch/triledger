@@ -24,7 +24,7 @@ class EmployeesController < ApplicationController
       # Assign roles
       if params[:employee][:role_ids].present?
         params[:employee][:role_ids].each do |role_id|
-          @employee.add_role(Role.find(role_id).name) if role_id.present?
+          @employee.roles << Role.find(role_id) if role_id.present?
         end
       end
 
@@ -46,7 +46,7 @@ class EmployeesController < ApplicationController
       @employee.roles.clear
       if params[:employee][:role_ids].present?
         params[:employee][:role_ids].each do |role_id|
-          @employee.add_role(Role.find(role_id).name) if role_id.present?
+          @employee.roles << Role.find(role_id) if role_id.present?
         end
       end
 
@@ -71,7 +71,7 @@ class EmployeesController < ApplicationController
     params.require(:employee).permit(
       :employee_id, :hire_date, :status, :salary, 
       :address, :emergency_contact_name, :emergency_contact_phone,
-      user_attributes: [:first_name, :last_name, :email, :phone]
+      user_attributes: [:first_name, :last_name, :email, :phone, :password, :password_confirmation]
     )
   end
 
