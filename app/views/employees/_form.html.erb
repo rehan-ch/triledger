@@ -1,0 +1,154 @@
+<%= form_with model: @employee, local: true, class: "space-y-8" do |form| %>
+  <% if @employee.errors.any? %>
+    <div class="rounded-md bg-red-50 p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-4 w-4 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            <%= pluralize(@employee.errors.count, "error") %> prohibited this employee from being saved:
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc pl-5 space-y-1">
+              <% @employee.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Personal Information -->
+  <div>
+    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Personal Information</h3>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <%= form.fields_for :user do |user_form| %>
+        <div>
+          <%= user_form.label :first_name, class: "block text-sm font-medium text-gray-700" %>
+          <%= user_form.text_field :first_name, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "First name" %>
+        </div>
+
+        <div>
+          <%= user_form.label :last_name, class: "block text-sm font-medium text-gray-700" %>
+          <%= user_form.text_field :last_name, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "Last name" %>
+        </div>
+
+        <div>
+          <%= user_form.label :email, class: "block text-sm font-medium text-gray-700" %>
+          <%= user_form.email_field :email, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "Email address" %>
+        </div>
+
+        <div>
+          <%= user_form.label :phone, class: "block text-sm font-medium text-gray-700" %>
+          <%= user_form.telephone_field :phone, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "Phone number" %>
+        </div>
+
+        <% if @employee.new_record? %>
+          <div>
+            <%= user_form.label :password, class: "block text-sm font-medium text-gray-700" %>
+            <%= user_form.password_field :password, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "Password" %>
+          </div>
+
+          <div>
+            <%= user_form.label :password_confirmation, class: "block text-sm font-medium text-gray-700" %>
+            <%= user_form.password_field :password_confirmation, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "Confirm password" %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Employment Information -->
+  <div>
+    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Employment Information</h3>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div>
+        <%= form.label :employee_id, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :employee_id, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "Employee ID" %>
+      </div>
+
+      <div>
+        <%= form.label :hire_date, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.date_field :hire_date, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+      </div>
+
+      <div>
+        <%= form.label :department, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.select :department, 
+            options_for_select([['Select Department', ''], ['IT', 'IT'], ['HR', 'HR'], ['Finance', 'Finance'], ['Sales', 'Sales'], ['Marketing', 'Marketing'], ['Operations', 'Operations']], @employee.department), 
+            {}, 
+            class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+      </div>
+
+      <div>
+        <%= form.label :position, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :position, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "Job title" %>
+      </div>
+
+      <div>
+        <%= form.label :status, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.select :status, 
+            options_for_select([['Active', 'active'], ['Inactive', 'inactive'], ['On Leave', 'on_leave'], ['Terminated', 'terminated']], @employee.status || 'active'), 
+            {}, 
+            class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+      </div>
+
+      <div>
+        <%= form.label :salary, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.number_field :salary, step: 0.01, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "Annual salary" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Information -->
+  <div>
+    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Additional Information</h3>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div class="sm:col-span-2">
+        <%= form.label :address, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_area :address, rows: 3, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "Full address" %>
+      </div>
+
+      <div>
+        <%= form.label :emergency_contact_name, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :emergency_contact_name, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "Emergency contact name" %>
+      </div>
+
+      <div>
+        <%= form.label :emergency_contact_phone, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.telephone_field :emergency_contact_phone, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "Emergency contact phone" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Roles Assignment -->
+  <div>
+    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Role Assignment</h3>
+    <div class="bg-gray-50 rounded-lg p-4">
+      <p class="text-sm text-gray-600 mb-4">Select the roles for this employee:</p>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <% @roles.each do |role| %>
+          <div class="flex items-center">
+            <%= check_box_tag "employee[role_ids][]", role.id, @employee.roles.include?(role), 
+                id: "role_#{role.id}", 
+                class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %>
+            <label for="role_<%= role.id %>" class="ml-2 block text-sm text-gray-900">
+              <%= role.name %>
+            </label>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Actions -->
+  <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+    <%= link_to "Cancel", employees_path, class: "bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+    <%= form.submit @employee.new_record? ? "Create Employee" : "Update Employee", class: "bg-blue-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+  </div>
+<% end %> 
