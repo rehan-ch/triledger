@@ -68,6 +68,14 @@ class EmployeesController < ApplicationController
   end
 
   def employee_params
+    # Remove blank password fields for updates
+    if params[:employee][:user_attributes].present?
+      if params[:employee][:user_attributes][:password].blank?
+        params[:employee][:user_attributes].delete(:password)
+        params[:employee][:user_attributes].delete(:password_confirmation)
+      end
+    end
+    
     params.require(:employee).permit(
       :employee_id, :hire_date, :status, :salary, 
       :address, :emergency_contact_name, :emergency_contact_phone,

@@ -13,6 +13,11 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true
   validates :phone, presence: true
   
+  # Override Devise password validation to be conditional
+  def password_required?
+    new_record? || password.present? || password_confirmation.present?
+  end
+  
   def full_name
     "#{first_name} #{last_name}"
   end
