@@ -1,0 +1,136 @@
+<%= form_with model: @role, local: true, class: "p-6" do |form| %>
+  <% if @role.errors.any? %>
+    <div class="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-4 w-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            <%= pluralize(@role.errors.count, "error") %> prohibited this role from being saved:
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc pl-5 space-y-1">
+              <% @role.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="space-y-6">
+    <!-- Role Name -->
+    <div>
+      <label for="role_name" class="block text-sm font-medium text-gray-700 mb-2">
+        Role Name <span class="text-red-500">*</span>
+      </label>
+      <%= form.text_field :name, 
+          class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500",
+          placeholder: "e.g., admin, manager, employee",
+          required: true %>
+      <p class="mt-1 text-sm text-gray-500">
+        Use lowercase letters and underscores (e.g., system_admin, hr_manager)
+      </p>
+    </div>
+
+    <!-- Role Description -->
+    <div>
+      <label for="role_description" class="block text-sm font-medium text-gray-700 mb-2">
+        Description
+      </label>
+      <%= form.text_area :description, 
+          rows: 4,
+          class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500",
+          placeholder: "Describe the role's responsibilities and permissions..." %>
+      <p class="mt-1 text-sm text-gray-500">
+        Optional description of what this role entails
+      </p>
+    </div>
+
+    <!-- Role Preview (only for new) -->
+    <% if @role.new_record? %>
+      <div class="bg-gray-50 rounded-lg p-4">
+        <h4 class="text-sm font-medium text-gray-900 mb-3">Role Preview</h4>
+        <div class="space-y-2">
+          <div class="flex items-center text-sm text-gray-600">
+            <svg style="width: 12px; height: 12px;" class="mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Can be assigned to employees
+          </div>
+          <div class="flex items-center text-sm text-gray-600">
+            <svg style="width: 12px; height: 12px;" class="mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Supports role-based access control
+          </div>
+          <div class="flex items-center text-sm text-gray-600">
+            <svg style="width: 12px; height: 12px;" class="mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Can be managed through the admin interface
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Current Role Info (only for edit) -->
+    <% unless @role.new_record? %>
+      <div class="bg-blue-50 rounded-lg p-4">
+        <h4 class="text-sm font-medium text-blue-900 mb-3">Current Role Information</h4>
+        <div class="space-y-2">
+          <div class="flex items-center text-sm text-blue-700">
+            <svg style="width: 12px; height: 12px;" class="mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <strong>Employees with this role:</strong> <%= @role.employees.count %>
+          </div>
+          <div class="flex items-center text-sm text-blue-700">
+            <svg style="width: 12px; height: 12px;" class="mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <strong>Created:</strong> <%= @role.created_at&.strftime("%B %d, %Y at %I:%M %p") || "Unknown" %>
+          </div>
+          <% if @role.updated_at != @role.created_at %>
+            <div class="flex items-center text-sm text-blue-700">
+              <svg style="width: 12px; height: 12px;" class="mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <strong>Last updated:</strong> <%= @role.updated_at&.strftime("%B %d, %Y at %I:%M %p") || "Unknown" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Warning for roles with employees -->
+      <% if @role.employees.any? %>
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-4 w-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-yellow-800">Role in Use</h3>
+              <div class="mt-2 text-sm text-yellow-700">
+                <p>This role is currently assigned to <%= pluralize(@role.employees.count, 'employee') %>. Changes will affect all employees with this role.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- Form Actions -->
+  <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+    <%= link_to "Cancel", roles_path, class: "px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    <%= form.submit @role.new_record? ? "Create Role" : "Update Role", class: "px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+  </div>
+<% end %> 
