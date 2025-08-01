@@ -22,6 +22,14 @@ class DashboardController < ApplicationController
     # Status distribution
     @status_distribution = Employee.group(:status).count
     
+    # Finance statistics
+    @total_accounts = Account.count
+    @total_balance = Account.sum(:balance)
+    @total_income = Transaction.total_by_type_and_period('income')
+    @total_expenses = Transaction.total_by_type_and_period('expense')
+    @net_balance = @total_income - @total_expenses
+    @recent_transactions = Transaction.includes(:account).recent.limit(5)
+    
     # Quick actions based on user role
     @quick_actions = get_quick_actions
     
@@ -44,6 +52,11 @@ class DashboardController < ApplicationController
       actions << { title: 'Add Employee', path: new_employee_path, icon: 'user-plus', color: 'green' }
       actions << { title: 'View Reports', path: '#', icon: 'chart-bar', color: 'orange' }
     end
+    
+    # Finance actions
+    actions << { title: 'View Accounts', path: accounts_path, icon: 'wallet', color: 'indigo' }
+    actions << { title: 'New Transaction', path: new_transaction_path, icon: 'plus-circle', color: 'green' }
+    actions << { title: 'View Transactions', path: transactions_path, icon: 'list', color: 'blue' }
     
     actions << { title: 'My Profile', path: profile_path, icon: 'user', color: 'gray' }
     actions << { title: 'Help & Support', path: '#', icon: 'question-circle', color: 'blue' }
@@ -71,6 +84,23 @@ class DashboardController < ApplicationController
         type: 'info',
         message: "#{recent_terminations.count} employee(s) terminated in the last 7 days",
         action: 'View details'
+      }
+    end
+    
+    # Finance notifications
+    if @total_balance < 0
+      notifications << {
+        type: 'warning',
+        message: "Negative account balance detected",
+        action: 'Review accounts'
+      }
+    end
+    
+    if @total_expenses > @total_income
+      notifications << {
+        type: 'warning',
+        message: "Expenses exceed income this period",
+        action: 'Review transactions'
       }
     end
     

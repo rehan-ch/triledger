@@ -5,13 +5,19 @@ Rails.application.routes.draw do
   resources :employees
   resources :roles
   
+  # Finance System Routes
+  resources :accounts
+  resources :transactions do
+    collection do
+      get :categories
+    end
+  end
+  
   # Dashboard
   root 'dashboard#index'
   
   # Profile management
-  get 'profile', to: 'profiles#show'
-  get 'profile/edit', to: 'profiles#edit'
-  patch 'profile', to: 'profiles#update'
+  resource :profile, only: [:show, :edit, :update]
   
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
