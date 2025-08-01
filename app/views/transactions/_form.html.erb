@@ -1,0 +1,166 @@
+<%= form_with(model: transaction, local: true, class: "space-y-6") do |form| %>
+  <% if transaction.errors.any? %>
+    <div class="bg-red-50 border border-red-200 rounded-md p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            <%= pluralize(transaction.errors.count, "error") %> prohibited this transaction from being saved:
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc pl-5 space-y-1">
+              <% transaction.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <div>
+      <%= form.label :account_id, "Account", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.select :account_id, 
+          options_for_select(@accounts.map { |a| [a.display_name, a.id] }, transaction.account_id), 
+          { prompt: "Select an account" }, 
+          class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+    </div>
+
+    <div>
+      <%= form.label :transaction_type, "Transaction Type", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.select :transaction_type, 
+          options_for_select([
+            ['Income', 'income'],
+            ['Expense', 'expense'],
+            ['Loan', 'loan'],
+            ['Transfer In', 'transfer_in'],
+            ['Transfer Out', 'transfer_out']
+          ], transaction.transaction_type), 
+          { prompt: "Select transaction type" }, 
+          class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+          id: "transaction_type_select" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <div>
+      <%= form.label :amount, "Amount", class: "block text-sm font-medium text-gray-700" %>
+      <div class="mt-1 relative rounded-md shadow-sm">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <span class="text-gray-500 sm:text-sm">$</span>
+        </div>
+        <%= form.number_field :amount, step: "0.01", min: "0.01", class: "pl-7 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "0.00" %>
+      </div>
+    </div>
+
+    <div>
+      <%= form.label :transaction_date, "Date", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.date_field :transaction_date, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <div>
+      <%= form.label :category, "Category", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.select :category, 
+          options_for_select([], transaction.category), 
+          { prompt: "Select a category" }, 
+          class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+          id: "transaction_category" %>
+    </div>
+
+    <div id="employee_field" class="<%= transaction.loan? ? '' : 'hidden' %>">
+      <%= form.label :employee_id, "Employee (Required for Loans)", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.select :employee_id, 
+          options_for_select(@employees.map { |e| [e.full_name, e.id] }, transaction.employee_id), 
+          { prompt: "Select an employee" }, 
+          class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+    </div>
+
+    <div id="reference_field" class="<%= transaction.loan? ? 'hidden' : '' %>">
+      <%= form.label :reference, "Reference", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.text_field :reference, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "Optional reference number" %>
+    </div>
+  </div>
+
+  <div>
+    <%= form.label :description, "Description", class: "block text-sm font-medium text-gray-700" %>
+    <%= form.text_area :description, rows: 3, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder: "Describe the transaction" %>
+  </div>
+
+  <div class="flex justify-end space-x-3">
+    <%= link_to "Cancel", transactions_path, class: "bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+    <%= form.submit class: "bg-blue-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+  </div>
+<% end %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const transactionTypeSelect = document.getElementById('transaction_type_select');
+  const categorySelect = document.getElementById('transaction_category');
+  const employeeField = document.getElementById('employee_field');
+  const referenceField = document.getElementById('reference_field');
+  
+  const categories = {
+    income: ['salary', 'bonus', 'commission', 'investment_income', 'rental_income', 'consulting', 'freelance', 'other_income'],
+    expense: ['salary_expense', 'rent', 'utilities', 'office_supplies', 'equipment', 'marketing', 'travel', 'meals', 'insurance', 'maintenance', 'other_expense'],
+    loan: ['personal_loan', 'business_loan', 'mortgage', 'car_loan', 'student_loan', 'credit_card_payment', 'other_loan'],
+    transfer_in: ['bank_transfer', 'cash_transfer', 'investment_transfer', 'loan_payment', 'savings_transfer', 'other_transfer'],
+    transfer_out: ['bank_transfer', 'cash_transfer', 'investment_transfer', 'loan_payment', 'savings_transfer', 'other_transfer']
+  };
+  
+  function updateCategories() {
+    const selectedType = transactionTypeSelect.value;
+    const currentCategory = categorySelect.value;
+    
+    // Clear current options
+    categorySelect.innerHTML = '<option value="">Select a category</option>';
+    
+    if (selectedType && categories[selectedType]) {
+      categories[selectedType].forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        categorySelect.appendChild(option);
+      });
+      
+      // Restore previous selection if it's still valid
+      if (currentCategory && categories[selectedType].includes(currentCategory)) {
+        categorySelect.value = currentCategory;
+      }
+    }
+  }
+  
+  function toggleEmployeeField() {
+    const selectedType = transactionTypeSelect.value;
+    const isLoan = selectedType === 'loan';
+    
+    if (isLoan) {
+      employeeField.classList.remove('hidden');
+      referenceField.classList.add('hidden');
+    } else {
+      employeeField.classList.add('hidden');
+      referenceField.classList.remove('hidden');
+    }
+  }
+  
+  if (transactionTypeSelect) {
+    transactionTypeSelect.addEventListener('change', function() {
+      updateCategories();
+      toggleEmployeeField();
+    });
+    
+    // Initialize on page load
+    if (transactionTypeSelect.value) {
+      updateCategories();
+      toggleEmployeeField();
+    }
+  }
+});
+</script> 

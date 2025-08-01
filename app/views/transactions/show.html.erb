@@ -1,0 +1,161 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex justify-between items-start">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Transaction Details</h1>
+          <p class="mt-2 text-sm text-gray-600">View transaction information and details.</p>
+        </div>
+        <div class="flex space-x-3">
+          <%= link_to edit_transaction_path(@transaction), class: "bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg flex items-center" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            Edit Transaction
+          <% end %>
+          <%= link_to transactions_path, class: "bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg flex items-center" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Back to Transactions
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transaction Summary Card -->
+    <div class="bg-white shadow rounded-lg mb-8">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-medium text-gray-900">Transaction Summary</h3>
+          <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full 
+            <%= case @transaction.transaction_type
+                when 'income' then 'bg-green-100 text-green-800'
+                when 'expense' then 'bg-red-100 text-red-800'
+                when 'loan' then 'bg-yellow-100 text-yellow-800'
+                when 'transfer_in' then 'bg-blue-100 text-blue-800'
+                when 'transfer_out' then 'bg-purple-100 text-purple-800'
+                else 'bg-gray-100 text-gray-800'
+                end %>">
+            <%= @transaction.transaction_type.humanize %>
+          </span>
+        </div>
+      </div>
+      <div class="px-6 py-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h4 class="text-2xl font-bold <%= @transaction.income? ? 'text-green-600' : 'text-red-600' %>">
+              <%= @transaction.income? ? '+' : '-' %><%= @transaction.formatted_amount %>
+            </h4>
+            <p class="text-sm text-gray-600 mt-1">
+              <%= @transaction.transaction_date.strftime("%B %d, %Y") %>
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-medium text-gray-500">Account</p>
+            <p class="text-lg font-semibold text-gray-900"><%= @transaction.account.name %></p>
+            <p class="text-sm text-gray-600"><%= @transaction.account.account_type.humanize %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transaction Details -->
+    <div class="bg-white shadow rounded-lg">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">Transaction Details</h3>
+      </div>
+      <div class="px-6 py-4">
+        <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Category</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                <%= @transaction.category.humanize %>
+              </span>
+            </dd>
+          </div>
+          
+          <% if @transaction.loan? && @transaction.employee %>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Employee</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-8 w-8">
+                    <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                      <span class="text-xs font-medium text-blue-600"><%= @transaction.employee.full_name.first.upcase %></span>
+                    </div>
+                  </div>
+                  <div class="ml-3">
+                    <div class="text-sm font-medium text-gray-900"><%= @transaction.employee.full_name %></div>
+                    <div class="text-xs text-gray-500"><%= @transaction.employee.employee_id %></div>
+                  </div>
+                </div>
+              </dd>
+            </div>
+          <% end %>
+          
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Reference</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              <%= @transaction.reference.present? ? @transaction.reference : 'No reference' %>
+            </dd>
+          </div>
+          
+          <div class="sm:col-span-2">
+            <dt class="text-sm font-medium text-gray-500">Description</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              <%= @transaction.description.present? ? @transaction.description : 'No description provided' %>
+            </dd>
+          </div>
+          
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Created</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              <%= @transaction.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+            </dd>
+          </div>
+          
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              <%= @transaction.updated_at.strftime("%B %d, %Y at %I:%M %p") %>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Account Impact -->
+    <div class="bg-white shadow rounded-lg mt-8">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">Account Impact</h3>
+      </div>
+      <div class="px-6 py-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="text-center">
+            <p class="text-sm font-medium text-gray-500">Previous Balance</p>
+            <p class="text-lg font-semibold text-gray-900">
+              <%= number_to_currency(@transaction.account.balance - (@transaction.income? ? @transaction.amount : -@transaction.amount)) %>
+            </p>
+          </div>
+          
+          <div class="text-center">
+            <p class="text-sm font-medium text-gray-500">Transaction Amount</p>
+            <p class="text-lg font-semibold <%= @transaction.income? ? 'text-green-600' : 'text-red-600' %>">
+              <%= @transaction.income? ? '+' : '-' %><%= @transaction.formatted_amount %>
+            </p>
+          </div>
+          
+          <div class="text-center">
+            <p class="text-sm font-medium text-gray-500">Current Balance</p>
+            <p class="text-lg font-semibold text-gray-900">
+              <%= @transaction.account.formatted_balance %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
